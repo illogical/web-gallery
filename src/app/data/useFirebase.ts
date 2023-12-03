@@ -10,20 +10,17 @@ const pw = process.env.NEXT_PUBLIC_USER_PW ?? "";
 
 export const useFirebase = () => 
 {
-    const [db, setDb] = useState<Database | undefined>();
     const { sourcePaths, getSourcePaths } = useSourcePaths();
 
     const initialLoad = () => {
-        const currentDb = getDatabase(firebaseApp);
-        setDb(currentDb);
-
-        getSourcePaths(currentDb);
+        const db = getDatabase(firebaseApp); 
+        getSourcePaths(db);
     }
 
     useEffect(() => {
         const auth = getAuth(firebaseApp);
 
-        if(auth.currentUser != null && db == undefined)
+        if(auth.currentUser != null)
         {
             console.log("Already logged in.");
             initialLoad();
