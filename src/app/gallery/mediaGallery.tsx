@@ -12,7 +12,6 @@ interface MediaGalleryProps {
 export const MediaGallery: React.FC<MediaGalleryProps> = ({}) => {
     const { sourcePaths } = useFirebase();
     const [selectedSource, setSelectedSource] = useState<MediaFileSource | undefined>();
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if(sourcePaths == undefined) { return; }
@@ -26,7 +25,7 @@ export const MediaGallery: React.FC<MediaGalleryProps> = ({}) => {
 
         // TODO: check cookie for last selected folder otherwise select the first one for now
         // TODO: select bookmarks by default
-        
+
     }, [sourcePaths]);
 
     const pathsDisplay = sourcePaths != null
@@ -34,9 +33,8 @@ export const MediaGallery: React.FC<MediaGalleryProps> = ({}) => {
 
     return (
         <React.Fragment>
-            <GalleryBar loading={loading} />
             {pathsDisplay}
-            { selectedSource && <MediaBrowser selectedSource={selectedSource} setLoading={setLoading} /> }
+            <MediaBrowser selectedSource={selectedSource} />
         </React.Fragment>
     )
 }

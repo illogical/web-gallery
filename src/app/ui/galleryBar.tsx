@@ -7,6 +7,8 @@ import { faCircleLeft, faCircleRight } from "@fortawesome/free-regular-svg-icons
 
 interface GalleryBarProps {
     loading: boolean;
+    nextPage: () => void;
+    previousPage: () => void;
 }
 
 enum MenuPosition {
@@ -14,7 +16,7 @@ enum MenuPosition {
     Bottom
 }
 
-export const GalleryBar: React.FC<GalleryBarProps> = ({ loading }) => {
+export const GalleryBar: React.FC<GalleryBarProps> = ({ loading, nextPage, previousPage }) => {
     const [showMenu, setShowMenu] = useState(true);
     const menuPosition: MenuPosition = MenuPosition.Top;
 
@@ -34,12 +36,12 @@ export const GalleryBar: React.FC<GalleryBarProps> = ({ loading }) => {
                 </div>
             </div>
 
-            <div className={styles.item}>
+            <div className={styles.item} onClick={previousPage}>
                 <div>
                     <FontAwesomeIcon icon={faCircleLeft} size="3x" />
                 </div>
             </div>
-            <div className={styles.item}>
+            <div className={styles.item} onClick={nextPage}>
                 <div>
                     <FontAwesomeIcon icon={faCircleRight} size="3x" />
                 </div>

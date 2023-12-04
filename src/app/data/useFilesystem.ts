@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { MediaFileSource } from "../models/MediaFileSource";
 
-export const useFileSystem = (selectedSource: MediaFileSource, setLoading: (loading: boolean) => void) => {
+export const useFileSystem = (selectedSource: MediaFileSource | undefined, setLoading: (loading: boolean) => void) => {
     const [mediaPaths, setMediaPaths] = useState<string[]>([]);
 
     useEffect(() => {
@@ -14,9 +14,9 @@ export const useFileSystem = (selectedSource: MediaFileSource, setLoading: (load
     const getFilePaths = (path: string, type: "photos" | "videos") => {
         if(!selectedSource) { return; }
 
-        const endpoint = `/api/media?path=${path}&type=${type}`;
         setLoading(true);
 
+        const endpoint = `/api/media?path=${path}&type=${type}`;
         fetch(endpoint)
             .then((response: any) => response.json())
             .then((data: string[]) => setMediaPaths(data))
@@ -26,8 +26,6 @@ export const useFileSystem = (selectedSource: MediaFileSource, setLoading: (load
             .finally(() => {
                 setLoading(false);
             });
-
-        // TODO: fetch file paths from images API
     }
 
     return { mediaPaths, getFilePaths };
