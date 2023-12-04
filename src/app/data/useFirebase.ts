@@ -4,6 +4,7 @@ import { getDatabase, ref, onValue, Database } from "firebase/database";
 import { useEffect, useState } from "react";
 import firebaseApp from "./firebaseConfig";
 import { ObjectDictionary } from "../models/ObjectDictionary";
+import { MediaFileSource } from "../models/MediaFileSource";
 
 const email = process.env.NEXT_PUBLIC_USER_EMAIL ?? "";
 const pw = process.env.NEXT_PUBLIC_USER_PW ?? "";
@@ -47,7 +48,7 @@ export const useFirebase = () =>
 
 export const useSourcePaths = () =>
 {
-    const [sourcePaths, setSourcePaths] = useState<ObjectDictionary<string> | undefined>();
+    const [sourcePaths, setSourcePaths] = useState<ObjectDictionary<MediaFileSource> | undefined>();
 
     const getSourcePaths = (db: Database | undefined) => {
         if(!db)

@@ -6,8 +6,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const folderPath = req.query["path"];
     const mediaType = req.query["type"];
 
-    console.log("progress?");
-
     if (!folderPath) {
         throw { message: "Path was not provided." }
     }
@@ -28,8 +26,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const clientBasePath = `C:\\Dev\\web-gallery\\public`;
         const imagePaths = mediaFiles.map(file => path.join(mediaPath.slice(clientBasePath.length), file)); // TOOD: if this is wrong then break it apart for readability
 
-        console.log(imagePaths[0]);
-
         res.status(200).json(imagePaths)
     } catch (err: any) {
         res.status(500).json({ message: err.message })
@@ -37,4 +33,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 const filterPhotos = (files: string[]) => files.filter(file => file.endsWith('.jpg') || file.endsWith('.png') || file.endsWith('.jpeg'));
-const filterVideos = (files: string[]) => files.filter(file => file.endsWith('.mp4') || file.endsWith('.wmv') || file.endsWith('.mpg') || file.endsWith('.mpeg'));
+const filterVideos = (files: string[]) => files.filter(file => file.endsWith('.mp4') || file.endsWith('.wmv') || file.endsWith('.mpg') || file.endsWith('.mpeg') || file.endsWith('.mkv'));

@@ -5,7 +5,7 @@
 
     height: 6rem;
     width: 100%;
-    opacity: 80%;
+    opacity: 70%;
 
     background-color: rgb(23, 114, 218);
 }
@@ -27,6 +27,11 @@
     width: 6rem;
 }
 
+.galleryBar .item .spin {
+    animation: spin-animation 1.5s infinite;
+    display: inline-block;
+}
+
 .galleryBar .item:hover {
     background-color: rgb(21, 98, 185);
 }
@@ -40,4 +45,13 @@
     bottom: 0;
 	animation-timing-function: 1s ease-in;
 }
+
+@keyframes spin-animation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(359deg);
+    }
+  }
 
