@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react"
 import { useFirebase } from "../data/useFirebase";
 import { MediaBrowser } from "./mediaBrowser";
+import { GalleryBar } from "../ui/galleryBar";
 
 interface MediaGalleryProps {
 
@@ -36,6 +37,7 @@ export const MediaGallery: React.FC<MediaGalleryProps> = ({}) => {
     return (
         <React.Fragment>
             <h2>Media Gallery</h2>
+            <GalleryBar />
             {pathsDisplay}
             <MediaBrowser selectedSource={selectedSource} />
         </React.Fragment>

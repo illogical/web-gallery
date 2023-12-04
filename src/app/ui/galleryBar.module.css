@@ -1,0 +1,43 @@
+.galleryBar {
+    display: flex;
+    position: fixed;
+    left: 0;
+
+    height: 6rem;
+    width: 100%;
+    opacity: 80%;
+
+    background-color: rgb(23, 114, 218);
+}
+
+.galleryBar.top {
+    transition: top .5s ease;
+    top: -6rem;
+}
+
+.galleryBar.bottom {
+    transition: bottom .5s ease;
+    bottom: -6rem;
+}
+
+.galleryBar .item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 6rem;
+}
+
+.galleryBar .item:hover {
+    background-color: rgb(21, 98, 185);
+}
+
+.galleryBar.top.show {
+    top: 0;
+	animation-timing-function: 1s ease-in;
+}
+
+.galleryBar.bottom.show {
+    bottom: 0;
+	animation-timing-function: 1s ease-in;
+}
+
