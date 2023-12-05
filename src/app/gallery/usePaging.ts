@@ -7,20 +7,19 @@ export const usePaging = <T>(items: T[], startPageNumber: number, pageSize: numb
 
     const updatePage = (updatedPageNumber: number) => {
 
-        console.log("#####################################################################");
         const safePageNumber = getSafePageNumber(updatedPageNumber, pageSize, items.length);
         const startIndex = (safePageNumber - 1) * pageSize;
         const endIndex = Math.min(items.length - 1, safePageNumber * pageSize - 1);
         const currentPage = items.slice(startIndex, endIndex + 1);
 
-        console.log("Total items", items.length);
-        console.log("Pagesize x safePageNumber", pageSize * safePageNumber);
+        // console.log("Total items", items.length);
+        // console.log("Pagesize x safePageNumber", pageSize * safePageNumber);
 
-        console.log("Start index", startIndex);
-        console.log("End index", endIndex);
+        // console.log("Start index", startIndex);
+        // console.log("End index", endIndex);
     
-        console.log("Safe page number", safePageNumber);
-        console.log("Current page count", currentPage.length);
+        // console.log("Safe page number", safePageNumber);
+        // console.log("Current page count", currentPage.length);
 
         setPageNumber(safePageNumber);
         setPage(currentPage);
@@ -34,18 +33,16 @@ const getSafePageNumber = (pageNumber: number, pageSize: number, totalCount: num
     const isPageNumberDivisibleByPageSize = totalCount % pageSize == 0;
     const lastPossiblePage = isPageNumberDivisibleByPageSize ? lastPage: lastPage + 1;
 
-    console.log("Last page number", lastPossiblePage);
+    //console.log("Last page number", lastPossiblePage);
 
     if(pageNumber <= 0)
     {
-        console.log("Start at end. Last Page:", lastPossiblePage);
-
+        // go to end
         return lastPossiblePage;
     }
     else if(pageNumber > lastPossiblePage)
     {
         // start over
-        console.log("Starting over.")
         return 1;
     }
 

@@ -1,5 +1,8 @@
 .galleryBar {
     display: flex;
+    justify-content: space-between;
+    align-content: center;
+
     position: fixed;
     left: 0;
 
@@ -8,6 +11,11 @@
     opacity: 70%;
 
     background-color: rgb(23, 114, 218);
+
+    /* prevent text selection */
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }
 
 .galleryBar.top {
@@ -18,6 +26,28 @@
 .galleryBar.bottom {
     transition: bottom .5s ease;
     bottom: -6rem;
+}
+
+.galleryBar .left {
+    display: flex;
+    min-width: 25%
+}
+
+.galleryBar .middle {
+    display: flex;
+    flex-grow: 2;
+    /* background-color: burlywood; */
+    justify-content: center;
+}
+
+.galleryBar .right {
+    display: flex;
+    min-width: 25%;
+    justify-content: right;
+}
+
+.galleryBar .pageDisplay {
+    font-size: 2rem;
 }
 
 .galleryBar .item {
