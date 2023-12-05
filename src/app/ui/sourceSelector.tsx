@@ -29,8 +29,8 @@ export const SourceSelector: React.FC<SourceSelectorProps> = ({show, selectedSou
     };
 
     return (
-        <div className={`${styles.sourceSelector} ${show && styles.show} ${selectedSource?.filePath == Constants.BOOKMARKS && styles.selected}`}>
-            <div className={`${styles.item}`} onClick={() => setSelectedSource({ filePath: Constants.BOOKMARKS, mediaType: "all" })}>
+        <div className={`${styles.sourceSelector} ${show && styles.show}`}>
+            <div className={`${styles.item} ${selectedSource?.filePath == Constants.BOOKMARKS && styles.selected}`} onClick={() => setSelectedSource({ filePath: Constants.BOOKMARKS, mediaType: "all" })}>
                 <div>
                     <FontAwesomeIcon icon={faBookmark} size="3x" />
                 </div>

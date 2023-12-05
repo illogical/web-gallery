@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import firebaseApp from "./firebaseConfig";
 import { ObjectDictionary } from "../models/ObjectDictionary";
 import { MediaFileSource } from "../models/MediaFileSource";
+import { FileBookmark } from "../models/FileBookmark";
 
 const email = process.env.NEXT_PUBLIC_USER_EMAIL ?? "";
 const pw = process.env.NEXT_PUBLIC_USER_PW ?? "";
@@ -12,10 +13,12 @@ const pw = process.env.NEXT_PUBLIC_USER_PW ?? "";
 export const useFirebase = () => 
 {
     const { sourcePaths, getSourcePaths } = useSourcePaths();
+    const { fileBookmarks, getFileBookmarks } = useFileBookmarks();
 
     const initialLoad = () => {
         const db = getDatabase(firebaseApp); 
         getSourcePaths(db);
+        getFileBookmarks(db);
     }
 
     useEffect(() => {
@@ -43,7 +46,7 @@ export const useFirebase = () =>
             });
     }, []);
 
-    return { sourcePaths };
+    return { sourcePaths, fileBookmarks };
 }
 
 export const useSourcePaths = () =>
@@ -60,13 +63,35 @@ export const useSourcePaths = () =>
         const sourcePathsRef = ref(db, 'sourcePaths/');
         onValue(sourcePathsRef, (snapshot) => {
             const data = snapshot.val();
-            console.log("Got data: ", data);
-
             setSourcePaths(data);
         });
     }
 
     return { sourcePaths, getSourcePaths };
+}
+
+export const useFileBookmarks = () => {
+    const [fileBookmarks, setFileBookmarks] = useState<ObjectDictionary<FileBookmark> | undefined>();
+
+    const getFileBookmarks = (db: Database | undefined) => {
+        if(!db)
+        {
+            console.error("db is not initialized");
+            return;
+        }
+
+        const fileBookmarksRef = ref(db, 'fileBookmarks/');
+        onValue(fileBookmarksRef, (snapshot) => {
+            const data = snapshot.val();
+            setFileBookmarks(data);
+        });
+    }
+
+    // TODO: save a bookmark
+    // TODO: delete a bookmark
+    // TODO: function the can toggle (decides to save or delete)
+
+    return { fileBookmarks, getFileBookmarks };
 }
 
 const mapToArrayFromProps = (data: any) => {

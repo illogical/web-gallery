@@ -4,12 +4,16 @@ import { usePaging } from "./usePaging";
 import { GalleryBar } from "../ui/galleryBar";
 import { SourceSelector } from "../ui/sourceSelector";
 import Constants from "../models/Constants";
+import { FileBookmark } from "../models/FileBookmark";
+import { ObjectDictionary } from "../models/ObjectDictionary";
+import path from "path";
 
 interface MediaBrowserProps {
     sources: MediaFileSource[];
+    fileBookmarks: ObjectDictionary<FileBookmark> | undefined;
 }
 
-export const MediaBrowser: React.FC<MediaBrowserProps> = ({sources}) => {
+export const MediaBrowser: React.FC<MediaBrowserProps> = ({sources, fileBookmarks}) => {
     const [loading, setLoading] = useState(true);
     const [selectedSource, setSelectedSource] = useState<MediaFileSource | undefined>();
     const [mediaPaths, setMediaPaths] = useState<string[]>([]);
@@ -21,28 +25,29 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({sources}) => {
         if(!selectedSource)
         {
             //const props: string[] = Object.keys(sources);
-            const selectedSource = sources[sources.length - 1];
+            const selectedSource: MediaFileSource = { filePath: Constants.BOOKMARKS, mediaType: "all" };
             setSelectedSource(selectedSource);
         }
 
         // TODO: check cookie for last selected folder otherwise select the first one for now
-        // TODO: select bookmarks by default
 
     }, [sources]);
 
     useEffect(() => {
-        if(!selectedSource) { return; }
+        if(!selectedSource || !fileBookmarks) { return; }
 
         if(selectedSource.filePath == Constants.BOOKMARKS)
         {
             // TODO: instead use a list from Firebase
-            // setMediaPaths(bookmarks)
+            const fileBookmarkSources = Object.keys(fileBookmarks).map(k => path.join(fileBookmarks[k].folderPath, fileBookmarks[k].fileName));
+            setMediaPaths(fileBookmarkSources)
+            setLoading(false);
             return;
         }
 
         getFilePaths(selectedSource.filePath, selectedSource.mediaType);
         
-    }, [selectedSource]);
+    }, [selectedSource, fileBookmarks]);
 
     const { page, pageNumber, updatePage } = usePaging(mediaPaths, 1, 6);
 
@@ -69,10 +74,6 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({sources}) => {
         <React.Fragment>
             <GalleryBar loading={loading} nextPage={nextPage} previousPage={previousPage} pageNumber={pageNumber} showSourceSelector={showSourceSelector} toggleSourceSelector={setShowSourceSelector} />
             <SourceSelector show={showSourceSelector} sources={sources} selectedSource={selectedSource} setSelectedSource={setSelectedSource} />
-            <div>Selected source: {selectedSource?.filePath}</div>
-            {mediaPaths.length > 0 && `${mediaPaths.length} paths found.`}
-            <p>Page number: {pageNumber}</p>
-            <br />
             {mediaPaths.length > 0 && <img src={mediaPaths[0]} alt={""} />}
         </React.Fragment>
     )
