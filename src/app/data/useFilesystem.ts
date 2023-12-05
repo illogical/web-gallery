@@ -1,19 +1,9 @@
-import { useEffect, useState } from "react";
-import { MediaFileSource } from "../models/MediaFileSource";
+import { useState } from "react";
 
-export const useFileSystem = (selectedSource: MediaFileSource | undefined, setLoading: (loading: boolean) => void) => {
+export const useFileSystem = (setLoading: (loading: boolean) => void) => {
     const [mediaPaths, setMediaPaths] = useState<string[]>([]);
 
-    useEffect(() => {
-        if(!selectedSource) { return; }
-
-        getFilePaths(selectedSource.filePath, selectedSource.mediaType);
-        
-    }, [selectedSource]);
-
-    const getFilePaths = (path: string, type: "photos" | "videos") => {
-        if(!selectedSource) { return; }
-
+    const getFilePaths = (path: string, type: "photos" | "videos" | "all") => {
         setLoading(true);
 
         const endpoint = `/api/media?path=${path}&type=${type}`;

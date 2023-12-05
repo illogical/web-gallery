@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react"
 import { MediaFileSource } from "../models/MediaFileSource";
-import { useFileSystem } from "../data/useFilesystem";
 import { usePaging } from "./usePaging";
 import { GalleryBar } from "../ui/galleryBar";
 import { SourceSelector } from "../ui/sourceSelector";
+import Constants from "../models/Constants";
 
 interface MediaBrowserProps {
     sources: MediaFileSource[];
@@ -12,9 +12,8 @@ interface MediaBrowserProps {
 export const MediaBrowser: React.FC<MediaBrowserProps> = ({sources}) => {
     const [loading, setLoading] = useState(true);
     const [selectedSource, setSelectedSource] = useState<MediaFileSource | undefined>();
+    const [mediaPaths, setMediaPaths] = useState<string[]>([]);
     const [showSourceSelector, setShowSourceSelector] = useState(false);
-    const { mediaPaths } = useFileSystem(selectedSource, setLoading);
-
 
     useEffect(() => {
         if(sources == undefined) { return; }
@@ -31,11 +30,40 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({sources}) => {
 
     }, [sources]);
 
+    useEffect(() => {
+        if(!selectedSource) { return; }
+
+        if(selectedSource.filePath == Constants.BOOKMARKS)
+        {
+            // TODO: instead use a list from Firebase
+            // setMediaPaths(bookmarks)
+            return;
+        }
+
+        getFilePaths(selectedSource.filePath, selectedSource.mediaType);
+        
+    }, [selectedSource]);
+
     const { page, pageNumber, updatePage } = usePaging(mediaPaths, 1, 6);
 
     const nextPage = () => updatePage(pageNumber + 1);
 
     const previousPage = () => updatePage(pageNumber - 1);
+
+    const getFilePaths = (path: string, type: "photos" | "videos" | "all") => {
+        setLoading(true);
+
+        const endpoint = `/api/media?path=${path}&type=${type}`;
+        fetch(endpoint)
+            .then((response: any) => response.json())
+            .then((data: string[]) => setMediaPaths(data))
+            .catch((error: any) => {
+                console.error(`Error fetching from ${endpoint}`, error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }
 
     return (
         <React.Fragment>
