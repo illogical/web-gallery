@@ -1,12 +1,10 @@
 import { useState } from "react";
 
-export const usePaging = <T>(items: T[], startPageNumber: number, pageSize: number) => {
-
+export const usePaging = <T>(startPageNumber: number, pageSize: number) => {
     const [page, setPage] = useState<T[]>([]);
     const [pageNumber, setPageNumber] = useState<number>(startPageNumber);
 
-    const updatePage = (updatedPageNumber: number) => {
-
+    const updatePage = (items: T[], updatedPageNumber: number) => {
         const safePageNumber = getSafePageNumber(updatedPageNumber, pageSize, items.length);
         const startIndex = (safePageNumber - 1) * pageSize;
         const endIndex = Math.min(items.length - 1, safePageNumber * pageSize - 1);

@@ -60,7 +60,7 @@ export const GalleryBar: React.FC<GalleryBarProps> = ({ loading, pageNumber, sho
             </div>
 
             <div className={styles.right}>
-                <div className={styles.item} onClick={nextPage}>
+                <div className={styles.item}>
                     <div className={`${oswald.className} ${styles.pageDisplay}`}>
                         {pageNumber}
                     </div>
