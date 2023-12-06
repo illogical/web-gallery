@@ -1,3 +1,4 @@
 .mediaBrowser img {
     max-height: 600px;
+    cursor: pointer;
 }
