@@ -8,6 +8,7 @@ import { FileBookmark } from "../models/FileBookmark";
 import { ObjectDictionary } from "../models/ObjectDictionary";
 import styles from './mediaBrowser.module.css';
 import path from "path";
+import { MediaView } from "./mediaView";
 
 interface MediaBrowserProps {
     sources: MediaFileSource[];
@@ -20,7 +21,7 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({sources, fileBookmark
     const [selectedSource, setSelectedSource] = useState<MediaFileSource | undefined>();
     const [mediaPaths, setMediaPaths] = useState<string[]>([]);
     const [showSourceSelector, setShowSourceSelector] = useState(false);
-    const [selectedMedia, setSelectedMedia] = useState<string | undefined>();
+    const [selectedMedia, setSelectedMedia] = useState<MediaFileSource | undefined>();
     const { page, pageNumber, updatePage } = usePaging<string>(1, pageSize);
 
     useEffect(() => {
@@ -78,13 +79,14 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({sources, fileBookmark
     }
 
     const displayMedia = useMemo(() => page.map((filePath, index) =>
-            <img key={index} src={filePath} alt={""} onClick={() => setSelectedMedia(filePath)} />
+            <img key={index} src={filePath} alt={""} onClick={() => setSelectedMedia({filePath, mediaType: selectedSource?.mediaType ?? "photos" })} />
     ), [page])
 
     return (
         <React.Fragment>
             <GalleryBar loading={loading} nextPage={nextPage} previousPage={previousPage} pageNumber={pageNumber} showSourceSelector={showSourceSelector} toggleSourceSelector={setShowSourceSelector} />
             <SourceSelector show={showSourceSelector} sources={sources} selectedSource={selectedSource} setSelectedSource={setSelectedSource} />
+            <MediaView mediaSource={selectedMedia} />
             <div className={styles.mediaBrowser}>
                 {displayMedia}
             </div>
