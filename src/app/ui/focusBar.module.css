@@ -1,0 +1,29 @@
+.focusBar {
+    position: fixed;
+    display: flex;
+
+    height: 6em;
+    width: 100%;
+
+    opacity: 80%;
+    background-color:rgb(48, 67, 104);
+
+    transition: top .5s ease;
+    top: -6rem;
+
+    z-index: 11;
+} 
+
+.focusBar .item {
+    width: 6em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+}
+
+.focusBar.show {
+    top: 0;
+	animation-timing-function: 0.2s ease-in;
+}

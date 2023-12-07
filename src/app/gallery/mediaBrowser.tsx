@@ -86,7 +86,7 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({sources, fileBookmark
         <React.Fragment>
             <GalleryBar loading={loading} nextPage={nextPage} previousPage={previousPage} pageNumber={pageNumber} showSourceSelector={showSourceSelector} toggleSourceSelector={setShowSourceSelector} />
             <SourceSelector show={showSourceSelector} sources={sources} selectedSource={selectedSource} setSelectedSource={setSelectedSource} />
-            <MediaView mediaSource={selectedMedia} />
+            <MediaView mediaSource={selectedMedia} setSelectedMedia={setSelectedMedia} />
             <div className={styles.mediaBrowser}>
                 {displayMedia}
             </div>
