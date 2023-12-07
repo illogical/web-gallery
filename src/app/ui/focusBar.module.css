@@ -15,10 +15,11 @@
 } 
 
 .focusBar .item {
-    width: 6em;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    width: 6em;
 
     cursor: pointer;
 }

@@ -11,16 +11,20 @@ interface MediaViewProps {
 export const MediaView: React.FC<MediaViewProps> = ({ mediaSource, setSelectedMedia }) => {
     // TODO: implement video.js for video file types or display the photo (for "all" to work)
 
-    const [showMenu, setShowMenu] = useState(true);
+    const [hideMenu, setHideMenu] = useState(false);
+    const [fitToWindow, setFitToWindow] = useState(true);
 
     const deselectMedia = () => setSelectedMedia(undefined);
 
+    const fitClass = fitToWindow ? styles.fit : "";
+
+
     return <>
         {mediaSource && <div>
-            <FocusBar back={deselectMedia} showMenu={showMenu} setShowMenu={setShowMenu} />
+            <FocusBar hideMenu={hideMenu} fitToWindow={fitToWindow} setHideMenu={setHideMenu} setFitToWindow={setFitToWindow} back={deselectMedia} />
             <div className={styles.mediaView}>
-                <div className={styles.center}>
-                    <img src={mediaSource.filePath} onClick={() => setShowMenu(true)} />
+                <div className={`${styles.center} ${fitClass}`}>
+                    <img src={mediaSource.filePath} onClick={() => setHideMenu(false)} />
                 </div>
             </div>
         </div>}

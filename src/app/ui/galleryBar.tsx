@@ -1,10 +1,11 @@
 // TODO: GUI for paging through images or video files
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import styles from "./galleryBar.module.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronUp, faChevronDown, faChevronLeft, faSitemap, faPalette } from "@fortawesome/free-solid-svg-icons";
 import { faCircleLeft, faCircleRight } from "@fortawesome/free-regular-svg-icons";
 import { Oswald } from 'next/font/google'
+import { ClickBlockOverlay } from "./clickBlockOverlay";
 
 const oswald = Oswald({ subsets: ['latin'] });
 
@@ -28,8 +29,33 @@ export const GalleryBar: React.FC<GalleryBarProps> = ({ loading, pageNumber, sho
 
     const sourceSelectorIcon = showSourceSelector ? <FontAwesomeIcon icon={faChevronLeft} size="2x" /> : <FontAwesomeIcon icon={faSitemap} size="2x" />;
 
+    useEffect(() => {
+        // Bind the event listener
+        document.addEventListener("mousedown", handleClickAnywhere);
+        return () => {
+          // Unbind the event listener on clean up
+          document.removeEventListener("mousedown", handleClickAnywhere);
+        };
+      }, []);
+
+    const handleClickAnywhere = (e: MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+        
+        setShowMenu(true);
+
+        document.removeEventListener("mousedown", handleClickAnywhere);
+    }
+
+    const hideMenu = () => {
+        setShowMenu(false);
+        document.addEventListener("mousedown", handleClickAnywhere);
+    }
+
     return (
-        <div className={`${styles.galleryBar} ${menuPosition == MenuPosition.Top ? styles.top : styles.bottom} ${showMenu && styles.show}`}>
+        <div>
+            {!showMenu && styles.show && <ClickBlockOverlay />}
+             <div className={`${styles.galleryBar} ${menuPosition == MenuPosition.Top ? styles.top : styles.bottom} ${showMenu && styles.show}`}>
             <div className={styles.left}>
                 <div className={styles.item} onClick={() => toggleSourceSelector(!showSourceSelector)}>
                     <div>
@@ -39,7 +65,7 @@ export const GalleryBar: React.FC<GalleryBarProps> = ({ loading, pageNumber, sho
                         }
                     </div>
                 </div>
-                <div className={styles.item} onClick={() => setShowMenu(!showMenu)}>
+                <div className={styles.item} onClick={() => !showSourceSelector && hideMenu()}>
                     <div>
                         <FontAwesomeIcon icon={menuPosition == MenuPosition.Top ? faChevronUp : faChevronDown} size="2x" />
                     </div>
@@ -68,5 +94,7 @@ export const GalleryBar: React.FC<GalleryBarProps> = ({ loading, pageNumber, sho
             </div>
 
         </div>
+        </div>
+       
     )
 }

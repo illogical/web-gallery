@@ -10,15 +10,20 @@
 
     justify-content: center;
     align-items: center;
+    
 }
 
 .mediaView .center {
-    animation: growImage .35s;
+    animation: growImage .25s;
+}
+
+.mediaView .center.fit img {
+    max-width: 100%; 
 }
 
 /* TODO: maybe make a class add this and make that toggle on zoom button click? */
 .mediaView .center img {
-    max-width: 100%; 
+    
 }
 
 @keyframes growImage {
@@ -28,4 +33,9 @@
     to {
       transform: scale(1);
     }
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
   }
