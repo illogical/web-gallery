@@ -29,32 +29,10 @@ export const GalleryBar: React.FC<GalleryBarProps> = ({ loading, pageNumber, sho
 
     const sourceSelectorIcon = showSourceSelector ? <FontAwesomeIcon icon={faChevronLeft} size="2x" /> : <FontAwesomeIcon icon={faSitemap} size="2x" />;
 
-    useEffect(() => {
-        // Bind the event listener
-        document.addEventListener("mousedown", handleClickAnywhere);
-        return () => {
-          // Unbind the event listener on clean up
-          document.removeEventListener("mousedown", handleClickAnywhere);
-        };
-      }, []);
-
-    const handleClickAnywhere = (e: MouseEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-        
-        setShowMenu(true);
-
-        document.removeEventListener("mousedown", handleClickAnywhere);
-    }
-
-    const hideMenu = () => {
-        setShowMenu(false);
-        document.addEventListener("mousedown", handleClickAnywhere);
-    }
 
     return (
         <div>
-            {!showMenu && styles.show && <ClickBlockOverlay />}
+            {!showMenu && styles.show && <ClickBlockOverlay onClick={() => setShowMenu(true)} />}
              <div className={`${styles.galleryBar} ${menuPosition == MenuPosition.Top ? styles.top : styles.bottom} ${showMenu && styles.show}`}>
             <div className={styles.left}>
                 <div className={styles.item} onClick={() => toggleSourceSelector(!showSourceSelector)}>
@@ -65,7 +43,7 @@ export const GalleryBar: React.FC<GalleryBarProps> = ({ loading, pageNumber, sho
                         }
                     </div>
                 </div>
-                <div className={styles.item} onClick={() => !showSourceSelector && hideMenu()}>
+                <div className={styles.item} onClick={() => !showSourceSelector && setShowMenu(false)}>
                     <div>
                         <FontAwesomeIcon icon={menuPosition == MenuPosition.Top ? faChevronUp : faChevronDown} size="2x" />
                     </div>
