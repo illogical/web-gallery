@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './focusBar.module.css';
 import React from "react"
 import { faArrowLeft, faChevronUp, faMaximize, faMinimize } from '@fortawesome/free-solid-svg-icons';
+import { ClickBlockOverlay } from './clickBlockOverlay';
 
 interface FocusBarProps {
     hideMenu: boolean;
@@ -15,8 +16,9 @@ interface FocusBarProps {
 // GUI for the selected image or video
 export const FocusBar: React.FC<FocusBarProps> = ({ hideMenu, setHideMenu, fitToWindow, setFitToWindow, back }) => {
 
-
-    return <div className={`${styles.focusBar} ${!hideMenu && styles.show}`}>
+    return <>
+    {hideMenu && <ClickBlockOverlay onClick={() => setHideMenu(false)} />}
+    <div className={`${styles.focusBar} ${!hideMenu && styles.show}`}>
         <div className={styles.item} onClick={back}>
             <FontAwesomeIcon icon={faArrowLeft} size="2x" />
         </div>
@@ -32,4 +34,6 @@ export const FocusBar: React.FC<FocusBarProps> = ({ hideMenu, setHideMenu, fitTo
             </div>
         </div>
     </div>
+    </>
+    
 }

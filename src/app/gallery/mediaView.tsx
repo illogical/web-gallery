@@ -12,12 +12,11 @@ export const MediaView: React.FC<MediaViewProps> = ({ mediaSource, setSelectedMe
     // TODO: implement video.js for video file types or display the photo (for "all" to work)
 
     const [hideMenu, setHideMenu] = useState(false);
-    const [fitToWindow, setFitToWindow] = useState(true);
+    const [fitToWindow, setFitToWindow] = useState(false);
 
     const deselectMedia = () => setSelectedMedia(undefined);
 
     const fitClass = fitToWindow ? styles.fit : "";
-
 
     return <>
         {mediaSource && <div>

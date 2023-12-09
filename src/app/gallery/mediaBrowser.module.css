@@ -1,4 +1,6 @@
 .mediaBrowser img {
     max-height: 600px;
     cursor: pointer;
+
+    z-index: 1;
 }

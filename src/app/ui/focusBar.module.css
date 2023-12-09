@@ -8,7 +8,7 @@
     opacity: 80%;
     background-color:rgb(48, 67, 104);
 
-    transition: top .5s ease;
+    transition: top .2s ease;
     top: -6rem;
 
     z-index: 11;
@@ -27,4 +27,8 @@
 .focusBar.show {
     top: 0;
 	animation-timing-function: 0.2s ease-in;
+}
+
+.focusBar .item:hover {
+    background-color: rgb(35, 48, 73);
 }

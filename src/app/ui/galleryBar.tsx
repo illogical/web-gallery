@@ -32,7 +32,7 @@ export const GalleryBar: React.FC<GalleryBarProps> = ({ loading, pageNumber, sho
 
     return (
         <div>
-            {!showMenu && styles.show && <ClickBlockOverlay onClick={() => setShowMenu(true)} />}
+            {!showMenu && <ClickBlockOverlay onClick={() => setShowMenu(true)} />}
              <div className={`${styles.galleryBar} ${menuPosition == MenuPosition.Top ? styles.top : styles.bottom} ${showMenu && styles.show}`}>
             <div className={styles.left}>
                 <div className={styles.item} onClick={() => toggleSourceSelector(!showSourceSelector)}>

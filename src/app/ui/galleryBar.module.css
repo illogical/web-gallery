@@ -10,7 +10,7 @@
     width: 100%;
     opacity: 70%;
 
-    background-color: rgb(23, 114, 218);
+    background-color:rgb(48, 67, 104);
 
     /* prevent text selection */
     -webkit-user-select: none; /* Safari */
@@ -19,12 +19,12 @@
 }
 
 .galleryBar.top {
-    transition: top .5s ease;
+    transition: top .3s ease;
     top: -6rem;
 }
 
 .galleryBar.bottom {
-    transition: bottom .5s ease;
+    transition: bottom .3s ease;
     bottom: -6rem;
 }
 
@@ -65,7 +65,7 @@
 }
 
 .galleryBar .item:hover {
-    background-color: rgb(21, 98, 185);
+    background-color: rgb(35, 48, 73);
 }
 
 .galleryBar.top.show {

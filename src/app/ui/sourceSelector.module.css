@@ -11,9 +11,9 @@
     width: 6rem;
     opacity: 90%;
 
-    background-color: rgb(23, 114, 218);
+    background-color:rgb(48, 67, 104);
 
-    transition: left .5s ease;
+    transition: left .2s ease;
 }
 
 .sourceSelector .item {
@@ -33,11 +33,11 @@
 }
 
 .sourceSelector .item:hover {
-    background-color: rgb(21, 98, 185);
+    background-color: rgb(35, 48, 73);
 }
 
 .sourceSelector .item.selected {
-    background-color: rgb(16, 68, 128);
+    background-color: rgb(185 74 21 / 63%)
 }
 
 .sourceSelector.show {
