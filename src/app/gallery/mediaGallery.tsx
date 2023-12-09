@@ -9,13 +9,12 @@ interface MediaGalleryProps {
 }
 
 export const MediaGallery: React.FC<MediaGalleryProps> = ({}) => {
-    const { sourcePaths, fileBookmarks } = useFirebase();
+    const { sourcePaths, fileBookmarks, pageBookmarks } = useFirebase();
     
-    return (
-        <React.Fragment>
-            <MediaBrowser sources={mapDictionaryToArray(sourcePaths)} fileBookmarks={fileBookmarks} />
-        </React.Fragment>
-    )
+    return <>
+        <MediaBrowser sources={mapDictionaryToArray(sourcePaths)} fileBookmarks={fileBookmarks} pageBookmarks={pageBookmarks} />
+    </>
+    
 }
 
 const mapDictionaryToArray = <_,T>(sources: ObjectDictionary<T> | undefined): T[] => sources ? Object.keys(sources).map(prop => sources[prop]) : [];

@@ -1,11 +1,12 @@
 "use client"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { getDatabase, ref, onValue, Database } from "firebase/database";
+import { getDatabase, ref, onValue, Database, query, orderByChild } from "firebase/database";
 import { useEffect, useState } from "react";
 import firebaseApp from "./firebaseConfig";
 import { ObjectDictionary } from "../models/ObjectDictionary";
 import { MediaFileSource } from "../models/MediaFileSource";
 import { FileBookmark } from "../models/FileBookmark";
+import { PageBookmark } from "../models/PageBookmark";
 
 const email = process.env.NEXT_PUBLIC_USER_EMAIL ?? "";
 const pw = process.env.NEXT_PUBLIC_USER_PW ?? "";
@@ -14,11 +15,13 @@ export const useFirebase = () =>
 {
     const { sourcePaths, getSourcePaths } = useSourcePaths();
     const { fileBookmarks, getFileBookmarks } = useFileBookmarks();
+    const { pageBookmarks, getPagebookmarks } = usePageBookmarks();
 
     const initialLoad = () => {
         const db = getDatabase(firebaseApp); 
         getSourcePaths(db);
         getFileBookmarks(db);
+        getPagebookmarks(db);
     }
 
     useEffect(() => {
@@ -46,10 +49,10 @@ export const useFirebase = () =>
             });
     }, []);
 
-    return { sourcePaths, fileBookmarks };
+    return { sourcePaths, fileBookmarks, pageBookmarks };
 }
 
-export const useSourcePaths = () =>
+const useSourcePaths = () =>
 {
     const [sourcePaths, setSourcePaths] = useState<ObjectDictionary<MediaFileSource> | undefined>();
 
@@ -70,7 +73,7 @@ export const useSourcePaths = () =>
     return { sourcePaths, getSourcePaths };
 }
 
-export const useFileBookmarks = () => {
+const useFileBookmarks = () => {
     const [fileBookmarks, setFileBookmarks] = useState<ObjectDictionary<FileBookmark> | undefined>();
 
     const getFileBookmarks = (db: Database | undefined) => {
@@ -81,7 +84,8 @@ export const useFileBookmarks = () => {
         }
 
         const fileBookmarksRef = ref(db, 'fileBookmarks/');
-        onValue(fileBookmarksRef, (snapshot) => {
+        const bookmarkQuery = query(fileBookmarksRef, orderByChild("timestamp"));
+        onValue(bookmarkQuery, (snapshot) => {
             const data = snapshot.val();
             setFileBookmarks(data);
         });
@@ -94,6 +98,27 @@ export const useFileBookmarks = () => {
     return { fileBookmarks, getFileBookmarks };
 }
 
+const usePageBookmarks = () => {
+    const [pageBookmarks, setPageBookmarks] = useState<ObjectDictionary<PageBookmark> | undefined>();
+
+    const getPagebookmarks = (db: Database | undefined) => {
+        if(!db)
+        {
+            console.error("db is not initialized");
+            return;
+        }
+
+        const pageBookmarksRef = ref(db, 'pageBookmarks/');
+        onValue(pageBookmarksRef, (snapshot) => {
+            const data = snapshot.val();
+            setPageBookmarks(data);
+            console.log("PageBookmarks", data);
+        });
+    }
+
+    return { pageBookmarks, getPagebookmarks };
+}
+
 const mapToArrayFromProps = (data: any) => {
     const keys = Object.keys(data);
     let items: string[] = [];
@@ -104,3 +129,4 @@ const mapToArrayFromProps = (data: any) => {
 
     return items;
 }
+

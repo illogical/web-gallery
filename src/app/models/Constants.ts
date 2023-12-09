@@ -1,5 +1,5 @@
 const Constants = {
-    BOOKMARKS: "BOOKMARKS"
+    BOOKMARKS: "!BOOKMARKS"
 }
 
 export default Constants;

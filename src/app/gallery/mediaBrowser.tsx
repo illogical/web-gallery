@@ -9,13 +9,16 @@ import { ObjectDictionary } from "../models/ObjectDictionary";
 import styles from './mediaBrowser.module.css';
 import path from "path";
 import { MediaView } from "./mediaView";
+import { PageBookmark } from "../models/PageBookmark";
+import { getFilename } from "../helpers/utilities";
 
 interface MediaBrowserProps {
     sources: MediaFileSource[];
     fileBookmarks: ObjectDictionary<FileBookmark> | undefined;
+    pageBookmarks: ObjectDictionary<PageBookmark> | undefined;
 }
 
-export const MediaBrowser: React.FC<MediaBrowserProps> = ({sources, fileBookmarks}) => {
+export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmarks, pageBookmarks }) => {
     const pageSize = 6;
     const [loading, setLoading] = useState(true);
     const [selectedSource, setSelectedSource] = useState<MediaFileSource | undefined>();
@@ -43,27 +46,37 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({sources, fileBookmark
 
         if(selectedSource.filePath == Constants.BOOKMARKS)
         {
-            // TODO: instead use a list from Firebase
             const fileBookmarkSources = Object.keys(fileBookmarks).map(k => path.join(fileBookmarks[k].folderPath, fileBookmarks[k].fileName));
             setMediaPaths(fileBookmarkSources)
             setLoading(false);
             return;
         }
 
-        getFilePaths(selectedSource.filePath, selectedSource.mediaType);
+        fetchFilePaths(selectedSource.filePath, selectedSource.mediaType);
         
     }, [selectedSource, fileBookmarks]);
 
     useEffect(() => {
         // when the source changes then update the page
-        updatePage(mediaPaths, pageNumber);
-    }, [mediaPaths]);
+        if(!pageBookmarks || !selectedSource) { return; }
+        
+        const folderName = getFilename(selectedSource.filePath);
+        console.log(folderName);
+        const lastPageNumber = pageBookmarks[folderName]?.pageNumber;
+
+        if(!lastPageNumber)
+        {
+            // TODO: handle adding the page bookmark if one is not found
+        }
+
+        updatePage(mediaPaths, lastPageNumber);
+    }, [mediaPaths]);   // mediaPaths will update when selectedSource changes
 
 
     const nextPage = () => updatePage(mediaPaths, pageNumber + 1);
     const previousPage = () => updatePage(mediaPaths, pageNumber - 1);
 
-    const getFilePaths = (path: string, type: "photos" | "videos" | "all") => {
+    const fetchFilePaths = (path: string, type: "photos" | "videos" | "all") => {
         setLoading(true);
 
         const endpoint = `/api/media?path=${path}&type=${type}`;
