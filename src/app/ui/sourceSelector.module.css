@@ -4,12 +4,12 @@
     flex-direction: column;
 
     position: fixed;
-    top: 6rem;
+    top: 5rem;
     left: -6rem;
 
-    height: 100%;
     width: 6rem;
-    opacity: 90%;
+    height: 100%;
+    opacity: 70%;
 
     background-color:rgb(48, 67, 104);
 
@@ -38,6 +38,10 @@
 
 .sourceSelector .item.selected {
     background-color: rgb(185 74 21 / 63%)
+}
+
+.sourceSelector .item .label {
+    padding-top: 3px;
 }
 
 .sourceSelector.show {
