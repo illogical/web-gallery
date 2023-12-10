@@ -1,12 +1,13 @@
 "use client"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { getDatabase, ref, onValue, Database, query, orderByChild } from "firebase/database";
+import { getDatabase, ref, onValue, Database, query, orderByChild, set } from "firebase/database";
 import { useEffect, useState } from "react";
 import firebaseApp from "./firebaseConfig";
 import { ObjectDictionary } from "../models/ObjectDictionary";
 import { MediaFileSource } from "../models/MediaFileSource";
 import { FileBookmark } from "../models/FileBookmark";
 import { PageBookmark } from "../models/PageBookmark";
+import { getFilename } from "../helpers/utilities";
 
 const email = process.env.NEXT_PUBLIC_USER_EMAIL ?? "";
 const pw = process.env.NEXT_PUBLIC_USER_PW ?? "";
@@ -15,10 +16,16 @@ export const useFirebase = () =>
 {
     const { sourcePaths, getSourcePaths } = useSourcePaths();
     const { fileBookmarks, getFileBookmarks } = useFileBookmarks();
-    const { pageBookmarks, getPagebookmarks } = usePageBookmarks();
+    const { pageBookmarks, getPagebookmarks, createPageBookmark } = usePageBookmarks();
 
     const initialLoad = () => {
         const db = getDatabase(firebaseApp); 
+        if(!db)
+        {
+            console.error("db is not initialized");
+            return;
+        }
+
         getSourcePaths(db);
         getFileBookmarks(db);
         getPagebookmarks(db);
@@ -49,20 +56,14 @@ export const useFirebase = () =>
             });
     }, []);
 
-    return { sourcePaths, fileBookmarks, pageBookmarks };
+    return { sourcePaths, fileBookmarks, pageBookmarks, createPageBookmark };
 }
 
 const useSourcePaths = () =>
 {
     const [sourcePaths, setSourcePaths] = useState<ObjectDictionary<MediaFileSource> | undefined>();
 
-    const getSourcePaths = (db: Database | undefined) => {
-        if(!db)
-        {
-            console.error("db is not initialized");
-            return;
-        }
-
+    const getSourcePaths = (db: Database) => {
         const sourcePathsRef = ref(db, 'sourcePaths/');
         onValue(sourcePathsRef, (snapshot) => {
             const data = snapshot.val();
@@ -76,13 +77,7 @@ const useSourcePaths = () =>
 const useFileBookmarks = () => {
     const [fileBookmarks, setFileBookmarks] = useState<ObjectDictionary<FileBookmark> | undefined>();
 
-    const getFileBookmarks = (db: Database | undefined) => {
-        if(!db)
-        {
-            console.error("db is not initialized");
-            return;
-        }
-
+    const getFileBookmarks = (db: Database) => {
         const fileBookmarksRef = ref(db, 'fileBookmarks/');
         const bookmarkQuery = query(fileBookmarksRef, orderByChild("timestamp"));
         onValue(bookmarkQuery, (snapshot) => {
@@ -101,22 +96,32 @@ const useFileBookmarks = () => {
 const usePageBookmarks = () => {
     const [pageBookmarks, setPageBookmarks] = useState<ObjectDictionary<PageBookmark> | undefined>();
 
-    const getPagebookmarks = (db: Database | undefined) => {
+    const getPagebookmarks = (db: Database) => {
+        const pageBookmarksRef = ref(db, 'pageBookmarks/');
+        onValue(pageBookmarksRef, (snapshot) => {
+            const data = snapshot.val();
+            setPageBookmarks(data);
+        });
+    }
+
+    const createPageBookmark = (filePath: string, pageNumber: number, pageSize: number) => {
+        const db = getDatabase(firebaseApp); 
         if(!db)
         {
             console.error("db is not initialized");
             return;
         }
 
-        const pageBookmarksRef = ref(db, 'pageBookmarks/');
-        onValue(pageBookmarksRef, (snapshot) => {
-            const data = snapshot.val();
-            setPageBookmarks(data);
-            console.log("PageBookmarks", data);
-        });
+        const folderName = getFilename(filePath);
+        const pageBookmarksRef = ref(db, `pageBookmarks/${folderName}`);
+        const newBookmark: PageBookmark = {
+            pageNumber, 
+            pageSize
+        }
+        set(pageBookmarksRef, newBookmark);
     }
 
-    return { pageBookmarks, getPagebookmarks };
+    return { pageBookmarks, getPagebookmarks, createPageBookmark };
 }
 
 const mapToArrayFromProps = (data: any) => {

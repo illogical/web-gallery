@@ -21,6 +21,7 @@ export const usePaging = <T>(startPageNumber: number, pageSize: number) => {
 
         setPageNumber(safePageNumber);
         setPage(currentPage);
+        return safePageNumber;
     }
 
     return { page, pageNumber, updatePage }

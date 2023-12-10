@@ -16,9 +16,10 @@ interface MediaBrowserProps {
     sources: MediaFileSource[];
     fileBookmarks: ObjectDictionary<FileBookmark> | undefined;
     pageBookmarks: ObjectDictionary<PageBookmark> | undefined;
+    createPageBookmark: (filePath: string, pageNumber: number, pageSize: number) => void;
 }
 
-export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmarks, pageBookmarks }) => {
+export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmarks, pageBookmarks, createPageBookmark }) => {
     const pageSize = 6;
     const [loading, setLoading] = useState(true);
     const [selectedSource, setSelectedSource] = useState<MediaFileSource | undefined>();
@@ -59,22 +60,34 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmar
     useEffect(() => {
         // when the source changes then update the page
         if(!pageBookmarks || !selectedSource) { return; }
-        
+
         const folderName = getFilename(selectedSource.filePath);
-        console.log(folderName);
         const lastPageNumber = pageBookmarks[folderName]?.pageNumber;
 
         if(!lastPageNumber)
         {
             // TODO: handle adding the page bookmark if one is not found
+            createPageBookmark(selectedSource.filePath, pageNumber, pageSize);
+            updatePage(mediaPaths, pageNumber);
+            return;
         }
 
         updatePage(mediaPaths, lastPageNumber);
     }, [mediaPaths]);   // mediaPaths will update when selectedSource changes
 
 
-    const nextPage = () => updatePage(mediaPaths, pageNumber + 1);
-    const previousPage = () => updatePage(mediaPaths, pageNumber - 1);
+    const nextPage = () => {
+        const newPageNumber = updatePage(mediaPaths, pageNumber + 1);
+
+        if(!selectedSource) { return; }
+        createPageBookmark(selectedSource.filePath, newPageNumber, pageSize);
+    }
+    const previousPage = () => {
+        const newPageNumber = updatePage(mediaPaths, pageNumber - 1);
+
+        if(!selectedSource) { return; }
+        createPageBookmark(selectedSource.filePath, newPageNumber, pageSize);
+    }
 
     const fetchFilePaths = (path: string, type: "photos" | "videos" | "all") => {
         setLoading(true);
