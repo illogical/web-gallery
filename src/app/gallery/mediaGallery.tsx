@@ -9,10 +9,10 @@ interface MediaGalleryProps {
 }
 
 export const MediaGallery: React.FC<MediaGalleryProps> = ({}) => {
-    const { sourcePaths, fileBookmarks, pageBookmarks, createPageBookmark } = useFirebase();
+    const { sourcePaths, fileBookmarks, pageBookmarks, createPageBookmark, toggleFileBookmark } = useFirebase();
     
     return <>
-        <MediaBrowser sources={mapDictionaryToArray(sourcePaths)} fileBookmarks={fileBookmarks} pageBookmarks={pageBookmarks} createPageBookmark={createPageBookmark} />
+        <MediaBrowser sources={mapDictionaryToArray(sourcePaths)} fileBookmarks={fileBookmarks} pageBookmarks={pageBookmarks} createPageBookmark={createPageBookmark} toggleFileBookmark={toggleFileBookmark} />
     </>
     
 }

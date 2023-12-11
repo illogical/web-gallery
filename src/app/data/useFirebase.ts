@@ -1,13 +1,14 @@
 "use client"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { getDatabase, ref, onValue, Database, query, orderByChild, set } from "firebase/database";
+import { getDatabase, ref, onValue, Database, query, orderByChild, set, equalTo, push, remove } from "firebase/database";
 import { useEffect, useState } from "react";
 import firebaseApp from "./firebaseConfig";
 import { ObjectDictionary } from "../models/ObjectDictionary";
 import { MediaFileSource } from "../models/MediaFileSource";
 import { FileBookmark } from "../models/FileBookmark";
 import { PageBookmark } from "../models/PageBookmark";
-import { getFilename } from "../helpers/utilities";
+import { findKeyByFilePath, getFilename, getFolderPath } from "../helpers/utilities";
+import { Timestamp } from "firebase/firestore";
 
 const email = process.env.NEXT_PUBLIC_USER_EMAIL ?? "";
 const pw = process.env.NEXT_PUBLIC_USER_PW ?? "";
@@ -15,7 +16,7 @@ const pw = process.env.NEXT_PUBLIC_USER_PW ?? "";
 export const useFirebase = () => 
 {
     const { sourcePaths, getSourcePaths } = useSourcePaths();
-    const { fileBookmarks, getFileBookmarks } = useFileBookmarks();
+    const { fileBookmarks, getFileBookmarks, toggleBookmark } = useFileBookmarks();
     const { pageBookmarks, getPagebookmarks, createPageBookmark } = usePageBookmarks();
 
     const initialLoad = () => {
@@ -56,7 +57,7 @@ export const useFirebase = () =>
             });
     }, []);
 
-    return { sourcePaths, fileBookmarks, pageBookmarks, createPageBookmark };
+    return { sourcePaths, fileBookmarks, pageBookmarks, createPageBookmark, toggleFileBookmark: toggleBookmark };
 }
 
 const useSourcePaths = () =>
@@ -77,20 +78,51 @@ const useSourcePaths = () =>
 const useFileBookmarks = () => {
     const [fileBookmarks, setFileBookmarks] = useState<ObjectDictionary<FileBookmark> | undefined>();
 
-    const getFileBookmarks = (db: Database) => {
-        const fileBookmarksRef = ref(db, 'fileBookmarks/');
-        const bookmarkQuery = query(fileBookmarksRef, orderByChild("timestamp"));
-        onValue(bookmarkQuery, (snapshot) => {
-            const data = snapshot.val();
-            setFileBookmarks(data);
-        });
+        const getFileBookmarks = (db: Database) => {
+            const fileBookmarksRef = ref(db, 'fileBookmarks/');
+            const bookmarkQuery = query(fileBookmarksRef, orderByChild("timestamp"));
+            onValue(bookmarkQuery, (snapshot) => {
+                const data = snapshot.val();
+                setFileBookmarks(data);
+            });
+        }
+
+    const toggleBookmark = (filePath: string) => {
+        if(!fileBookmarks || filePath == "")
+        {
+            return;
+        }
+
+        const db = getDatabase(firebaseApp);         
+        const key = findKeyByFilePath(fileBookmarks, filePath);
+        
+        if(key)
+        {
+            // delete a bookmark
+            const fileBookmarksRef = ref(db, `fileBookmarks/${key}`);
+            remove(fileBookmarksRef);
+
+            console.log("bookmark deleted.");
+            
+            return;
+        }
+
+        // create a bookmark
+        const bookmark: FileBookmark = {
+            filePath: getFolderPath(filePath),
+            timestamp: Timestamp.now()
+        }
+
+        console.log("bookmark created.");
+
+        const fileBookmarksRef = ref(db, `fileBookmarks`);
+        push(fileBookmarksRef, bookmark);
+       
+        return;
     }
 
-    // TODO: save a bookmark
-    // TODO: delete a bookmark
-    // TODO: function the can toggle (decides to save or delete)
 
-    return { fileBookmarks, getFileBookmarks };
+    return { fileBookmarks, getFileBookmarks, toggleBookmark };
 }
 
 const usePageBookmarks = () => {

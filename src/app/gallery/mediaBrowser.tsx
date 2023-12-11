@@ -17,9 +17,10 @@ interface MediaBrowserProps {
     fileBookmarks: ObjectDictionary<FileBookmark> | undefined;
     pageBookmarks: ObjectDictionary<PageBookmark> | undefined;
     createPageBookmark: (filePath: string, pageNumber: number, pageSize: number) => void;
+    toggleFileBookmark: (filePath: string) => void;
 }
 
-export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmarks, pageBookmarks, createPageBookmark }) => {
+export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmarks, pageBookmarks, createPageBookmark, toggleFileBookmark }) => {
     const pageSize = 6;
     const [loading, setLoading] = useState(true);
     const [selectedSource, setSelectedSource] = useState<MediaFileSource | undefined>();
@@ -47,7 +48,7 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmar
 
         if(selectedSource.filePath == Constants.BOOKMARKS)
         {
-            const fileBookmarkSources = Object.keys(fileBookmarks).map(k => path.join(fileBookmarks[k].folderPath, fileBookmarks[k].fileName));
+            const fileBookmarkSources = Object.keys(fileBookmarks).map(k => fileBookmarks[k].filePath);
             setMediaPaths(fileBookmarkSources)
             setLoading(false);
             return;
@@ -74,7 +75,6 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmar
 
         updatePage(mediaPaths, lastPageNumber);
     }, [mediaPaths]);   // mediaPaths will update when selectedSource changes
-
 
     const nextPage = () => {
         const newPageNumber = updatePage(mediaPaths, pageNumber + 1);
@@ -112,7 +112,7 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmar
         <React.Fragment>
             <GalleryBar loading={loading} nextPage={nextPage} previousPage={previousPage} pageNumber={pageNumber} showSourceSelector={showSourceSelector} toggleSourceSelector={setShowSourceSelector} />
             <SourceSelector show={showSourceSelector} sources={sources} selectedSource={selectedSource} setSelectedSource={setSelectedSource} />
-            <MediaView mediaSource={selectedMedia} setSelectedMedia={setSelectedMedia} />
+            <MediaView mediaSource={selectedMedia} fileBookmarks={fileBookmarks} setSelectedMedia={setSelectedMedia} toggleFileBookmark={toggleFileBookmark} />
             <div className={styles.mediaBrowser}>
                 {displayMedia}
             </div>
