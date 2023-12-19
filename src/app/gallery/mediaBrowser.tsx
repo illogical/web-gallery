@@ -49,7 +49,7 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmar
         if(selectedSource.filePath == Constants.BOOKMARKS)
         {
             const fileBookmarkSources = Object.keys(fileBookmarks).map(k => fileBookmarks[k].filePath);
-            setMediaPaths(fileBookmarkSources)
+            setMediaPaths(fileBookmarkSources.reverse()); //descending order to show newest first
             setLoading(false);
             return;
         }

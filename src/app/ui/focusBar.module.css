@@ -32,3 +32,21 @@
 .focusBar .item:hover {
     background-color: rgb(35, 48, 73);
 }
+
+.focusBar .left {
+    display: flex;
+    min-width: 25%
+}
+
+.focusBar .middle {
+    display: flex;
+    flex-grow: 2;
+    /* background-color: burlywood; */
+    justify-content: center;
+}
+
+.focusBar .right {
+    display: flex;
+    min-width: 25%;
+    justify-content: right;
+}

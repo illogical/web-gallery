@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react"
 import styles from "./galleryBar.module.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronUp, faChevronDown, faChevronLeft, faSitemap, faPalette } from "@fortawesome/free-solid-svg-icons";
+import { faChevronUp, faChevronDown, faChevronLeft, faSitemap, faPalette, faAnglesRight, faAnglesLeft, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { faCircleLeft, faCircleRight } from "@fortawesome/free-regular-svg-icons";
 import { Oswald } from 'next/font/google'
 import { ClickBlockOverlay } from "./clickBlockOverlay";
@@ -33,46 +33,45 @@ export const GalleryBar: React.FC<GalleryBarProps> = ({ loading, pageNumber, sho
     return (
         <div>
             {!showMenu && <ClickBlockOverlay onClick={() => setShowMenu(true)} />}
-             <div className={`${styles.galleryBar} ${menuPosition == MenuPosition.Top ? styles.top : styles.bottom} ${showMenu && styles.show}`}>
-            <div className={styles.left}>
-                <div className={styles.item} onClick={() => toggleSourceSelector(!showSourceSelector)}>
-                    <div>
-                        {loading 
-                            ? <FontAwesomeIcon icon={faPalette} size="3x" className={styles.spin} />
-                            : <>{sourceSelectorIcon}</>
-                        }
+            <div className={`${styles.galleryBar} ${menuPosition == MenuPosition.Top ? styles.top : styles.bottom} ${showMenu && styles.show}`}>
+                <div className={styles.left}>
+                    <div className={styles.item} onClick={() => toggleSourceSelector(!showSourceSelector)}>
+                        <div>
+                            {loading
+                                ? <FontAwesomeIcon icon={faPalette} size="3x" className={styles.spin} />
+                                : <>{sourceSelectorIcon}</>
+                            }
+                        </div>
+                    </div>
+                    <div className={styles.item} onClick={() => !showSourceSelector && setShowMenu(false)}>
+                        <div>
+                            <FontAwesomeIcon icon={menuPosition == MenuPosition.Top ? faChevronUp : faChevronDown} size="2x" />
+                        </div>
                     </div>
                 </div>
-                <div className={styles.item} onClick={() => !showSourceSelector && setShowMenu(false)}>
-                    <div>
-                        <FontAwesomeIcon icon={menuPosition == MenuPosition.Top ? faChevronUp : faChevronDown} size="2x" />
-                    </div>
-                </div>
-            </div>
 
-            <div className={styles.middle}>
-                <div className={styles.item} onClick={previousPage}>
-                    <div>
-                        <FontAwesomeIcon icon={faCircleLeft} size="3x" />
+                <div className={styles.middle}>
+                    <div className={styles.item} onClick={previousPage}>
+                        <div>
+                            <FontAwesomeIcon icon={faCircleChevronLeft} size="3x" />
+                        </div>
+                    </div>
+                    <div className={styles.item} onClick={nextPage}>
+                        <div>
+                            <FontAwesomeIcon icon={faCircleChevronRight} size="3x" />
+                        </div>
                     </div>
                 </div>
-                <div className={styles.item} onClick={nextPage}>
-                    <div>
-                        <FontAwesomeIcon icon={faCircleRight} size="3x" />
-                    </div>
-                </div>
-            </div>
 
-            <div className={styles.right}>
-                <div className={styles.item}>
-                    <div className={`${oswald.className} ${styles.pageDisplay}`}>
-                        {pageNumber}
+                <div className={styles.right}>
+                    <div className={styles.item}>
+                        <div className={`${oswald.className} ${styles.pageDisplay}`}>
+                            {pageNumber}
+                        </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
-        </div>
-       
     )
 }
