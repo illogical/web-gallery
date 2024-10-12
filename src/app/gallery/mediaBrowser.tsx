@@ -7,7 +7,6 @@ import Constants from "../models/Constants";
 import { FileBookmark } from "../models/FileBookmark";
 import { ObjectDictionary } from "../models/ObjectDictionary";
 import styles from './mediaBrowser.module.css';
-import path from "path";
 import { MediaView } from "./mediaView";
 import { PageBookmark } from "../models/PageBookmark";
 import { getFilename } from "../helpers/utilities";
@@ -34,7 +33,6 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmar
 
         if(!selectedSource)
         {
-            //const props: string[] = Object.keys(sources);
             const selectedSource: MediaFileSource = { filePath: Constants.BOOKMARKS, mediaType: "all" };
             setSelectedSource(selectedSource);
         }
