@@ -16,10 +16,12 @@ interface FocusBarProps {
     setHideMenu: (show: boolean) => void;
     setFitToWindow: (fit: boolean) => void;
     toggleFileBookmark: () => void;
+    setNextMedia: () => void;
+    setPreviousMedia: () => void;
 }
 
 // GUI for the selected image or video
-export const FocusBar: React.FC<FocusBarProps> = ({ hideMenu, bookmarked, fitToWindow, setHideMenu, setFitToWindow, back, toggleFileBookmark, zoomIn, zoomOut }) => {
+export const FocusBar: React.FC<FocusBarProps> = ({ hideMenu, bookmarked, fitToWindow, setHideMenu, setFitToWindow, back, toggleFileBookmark, zoomIn, zoomOut, setNextMedia, setPreviousMedia }) => {
 
     return <>
         {hideMenu && <ClickBlockOverlay onClick={() => setHideMenu(false)} />}
@@ -58,12 +60,12 @@ export const FocusBar: React.FC<FocusBarProps> = ({ hideMenu, bookmarked, fitToW
             </div>
 
             <div className={styles.middle}>
-                <div className={styles.item}>
+                <div className={styles.item} onClick={setPreviousMedia}>
                     <div>
                         <FontAwesomeIcon icon={faAngleLeft} size="3x" />
                     </div>
                 </div>
-                <div className={styles.item}>
+                <div className={styles.item} onClick={setNextMedia}>
                     <div>
                         <FontAwesomeIcon icon={faAngleRight} size="3x" />
                     </div>

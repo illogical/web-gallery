@@ -11,9 +11,11 @@ interface MediaViewProps {
     fileBookmarks: ObjectDictionary<FileBookmark> | undefined;
     setSelectedMedia: (media: MediaFileSource | undefined) => void;
     toggleFileBookmark: (filePath: string) => void;
+    setNextMedia: () => void;
+    setPreviousMedia: () => void;
 }
 
-export const MediaView: React.FC<MediaViewProps> = ({ mediaSource, fileBookmarks, setSelectedMedia, toggleFileBookmark }) => {
+export const MediaView: React.FC<MediaViewProps> = ({ mediaSource, fileBookmarks, setSelectedMedia, toggleFileBookmark, setNextMedia, setPreviousMedia }) => {
     // TODO: implement video.js for video file types or display the photo (for "all" to work)
 
     // TODO: need to preload the image to get the height & width to be able to scale it
@@ -41,7 +43,19 @@ export const MediaView: React.FC<MediaViewProps> = ({ mediaSource, fileBookmarks
 
     return <>
         {mediaSource && <div>
-            <FocusBar hideMenu={hideMenu} fitToWindow={fitToWindow} bookmarked={bookmarked} setHideMenu={setHideMenu} setFitToWindow={setFitToWindow} back={deselectMedia} toggleFileBookmark={handleToggleFileBookmark} zoomIn={zoomIn} zoomOut={zoomOut} />
+            <FocusBar 
+                hideMenu={hideMenu} 
+                fitToWindow={fitToWindow} 
+                bookmarked={bookmarked} 
+                setHideMenu={setHideMenu} 
+                setFitToWindow={setFitToWindow} 
+                back={deselectMedia} 
+                toggleFileBookmark={handleToggleFileBookmark} 
+                zoomIn={zoomIn} 
+                zoomOut={zoomOut}
+                setNextMedia={setNextMedia}
+                setPreviousMedia={setPreviousMedia} />
+
             <div className={styles.mediaView}>
                 <div className={`${styles.center} ${fitClass}`}>
                     <img src={mediaSource.filePath} onClick={() => setHideMenu(false)} />

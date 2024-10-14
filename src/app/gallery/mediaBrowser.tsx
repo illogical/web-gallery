@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { MediaFileSource } from "../models/MediaFileSource";
-import { usePaging } from "./usePaging";
+import { PageOperation, usePaging } from "./usePaging";
 import { GalleryBar } from "../ui/galleryBar";
 import { SourceSelector } from "../ui/sourceSelector";
 import Constants from "../models/Constants";
@@ -21,12 +21,13 @@ interface MediaBrowserProps {
 
 export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmarks, pageBookmarks, createPageBookmark, toggleFileBookmark }) => {
     const pageSize = 6;
+    const defaultMediaType = "photos";
     const [loading, setLoading] = useState(true);
     const [selectedSource, setSelectedSource] = useState<MediaFileSource | undefined>();
     const [mediaPaths, setMediaPaths] = useState<string[]>([]);
     const [showSourceSelector, setShowSourceSelector] = useState(false);
     const [selectedMedia, setSelectedMedia] = useState<MediaFileSource | undefined>();
-    const { page, pageNumber, updatePage } = usePaging<string>(1, pageSize);
+    const { page, pageNumber, updatePage, lastPageOperation } = usePaging<string>(1, pageSize);
 
     useEffect(() => {
         if(sources == undefined) { return; }
@@ -74,6 +75,14 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmar
         updatePage(mediaPaths, lastPageNumber);
     }, [mediaPaths]);   // mediaPaths will update when selectedSource changes
 
+    useEffect(() => {
+        if(selectedMedia)
+        {
+            // lastPageOperation says if the user had just went to the next or the previous page
+            setSelectedMedia( {filePath: lastPageOperation == PageOperation.next ? page[0] : page[page.length - 1], mediaType: selectedSource?.mediaType ?? defaultMediaType } );
+        }
+    }, [page])
+
     const nextPage = () => {
         const newPageNumber = updatePage(mediaPaths, pageNumber + 1);
 
@@ -85,6 +94,30 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmar
 
         if(!selectedSource) { return; }
         createPageBookmark(selectedSource.filePath, newPageNumber, pageSize);
+    }
+
+    const selectNextMedia = () => {
+        const currentIndex = page.indexOf(selectedMedia?.filePath ?? "");
+        if(currentIndex >= page.length - 1)
+        {
+            // go to next page and select the first item
+            nextPage();
+            return;
+        }
+
+        setSelectedMedia( {filePath: page[currentIndex + 1], mediaType: selectedSource?.mediaType ?? defaultMediaType } )
+    }
+
+    const selectPreviousMedia = () => {
+        const currentIndex = page.indexOf(selectedMedia?.filePath ?? "");
+        if(currentIndex <= 0)
+        {
+            // go to previous page and select the last item
+            previousPage();
+            return;
+        }
+
+        setSelectedMedia( {filePath: page[currentIndex - 1], mediaType: selectedSource?.mediaType ?? defaultMediaType } )
     }
 
     const fetchFilePaths = (path: string, type: "photos" | "videos" | "all") => {
@@ -103,14 +136,20 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmar
     }
 
     const displayMedia = useMemo(() => page.map((filePath, index) =>
-            <img key={index} src={filePath} alt={""} onClick={() => setSelectedMedia({filePath, mediaType: selectedSource?.mediaType ?? "photos" })} />
+            <img key={index} src={filePath} alt={""} onClick={() => setSelectedMedia({filePath, mediaType: selectedSource?.mediaType ?? defaultMediaType })} />
     ), [page])
 
     return (
         <React.Fragment>
             <GalleryBar loading={loading} nextPage={nextPage} previousPage={previousPage} pageNumber={pageNumber} showSourceSelector={showSourceSelector} toggleSourceSelector={setShowSourceSelector} />
             <SourceSelector show={showSourceSelector} sources={sources} selectedSource={selectedSource} setSelectedSource={setSelectedSource} />
-            <MediaView mediaSource={selectedMedia} fileBookmarks={fileBookmarks} setSelectedMedia={setSelectedMedia} toggleFileBookmark={toggleFileBookmark} />
+            <MediaView 
+                mediaSource={selectedMedia} 
+                fileBookmarks={fileBookmarks} 
+                setSelectedMedia={setSelectedMedia} 
+                toggleFileBookmark={toggleFileBookmark} 
+                setNextMedia={selectNextMedia}
+                setPreviousMedia={selectPreviousMedia} />
             <div className={styles.mediaBrowser}>
                 {displayMedia}
             </div>
