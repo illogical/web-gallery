@@ -21,7 +21,7 @@ interface MediaBrowserProps {
 
 export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmarks, pageBookmarks, createPageBookmark, toggleFileBookmark }) => {
     const pageSize = 6;
-    const defaultMediaType = "photos";
+    const defaultMediaType = "all"; // TODO: make this an enum
     const [loading, setLoading] = useState(true);
     const [selectedSource, setSelectedSource] = useState<MediaFileSource | undefined>();
     const [mediaPaths, setMediaPaths] = useState<string[]>([]);
@@ -75,6 +75,8 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmar
         updatePage(mediaPaths, lastPageNumber);
     }, [mediaPaths]);   // mediaPaths will update when selectedSource changes
 
+
+    // if media was being viewed when the page changed then change to either the first(next was clicked) or last(previous was clicked) item
     useEffect(() => {
         if(selectedMedia)
         {
@@ -82,6 +84,8 @@ export const MediaBrowser: React.FC<MediaBrowserProps> = ({ sources, fileBookmar
             setSelectedMedia( {filePath: lastPageOperation == PageOperation.next ? page[0] : page[page.length - 1], mediaType: selectedSource?.mediaType ?? defaultMediaType } );
         }
     }, [page])
+
+
 
     const nextPage = () => {
         const newPageNumber = updatePage(mediaPaths, pageNumber + 1);

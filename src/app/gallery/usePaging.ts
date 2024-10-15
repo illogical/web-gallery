@@ -9,9 +9,6 @@ export const usePaging = <T>(startPageNumber: number, pageSize: number) => {
     const [page, setPage] = useState<T[]>([]);
     const [pageNumber, setPageNumber] = useState<number>(startPageNumber);
     const [lastPageOperation, setLastPageOperation] = useState<PageOperation>();
-    const [selectedIndex, setSelectedIndex] = useState<number>(0);  // TODO: track which image is being displayed. Not ideal though since the array is stored elsewhere and that array can change in size next time the source is selected.
-    // TODO: how to know what the next item is? Can at least make the decision to go forward or backward based upon the index.
-
 
     const updatePage = (items: T[], updatedPageNumber: number) => {
         const safePageNumber = getSafePageNumber(updatedPageNumber, pageSize, items.length);
@@ -19,26 +16,7 @@ export const usePaging = <T>(startPageNumber: number, pageSize: number) => {
         const endIndex = Math.min(items.length - 1, safePageNumber * pageSize - 1);
         const currentPage = items.slice(startIndex, endIndex + 1);
 
-        const lastPage = Math.floor(items.length / pageSize)
-
-        if(safePageNumber < pageNumber)
-        {
-            setLastPageOperation(PageOperation.previous);
-        }
-        else if(safePageNumber > pageNumber)
-        {
-            setLastPageOperation(PageOperation.next);
-        }
-        else if(pageNumber == lastPage && safePageNumber == 0)
-        {
-            // user was on the last page and is now on the first page
-            setLastPageOperation(PageOperation.next);
-        }
-        else if(pageNumber == 0 && safePageNumber == lastPage)
-        {
-            // user was on the first page and is now on the last page
-            setLastPageOperation(PageOperation.previous);
-        }
+        cachePageOperation(pageNumber, safePageNumber, pageSize, items.length, setLastPageOperation);
 
         setPageNumber(safePageNumber);
         setPage(currentPage);
@@ -49,9 +27,7 @@ export const usePaging = <T>(startPageNumber: number, pageSize: number) => {
 }
 
 const getSafePageNumber = (pageNumber: number, pageSize: number, totalCount: number) => {
-    const lastPage = Math.floor(totalCount / pageSize);
-    const isPageNumberDivisibleByPageSize = totalCount % pageSize == 0;
-    const lastPossiblePage = isPageNumberDivisibleByPageSize ? lastPage: lastPage + 1;
+    const lastPossiblePage = getLastPossiblePageNumber(pageSize, totalCount);
 
     if(pageNumber <= 0)
     {
@@ -65,4 +41,39 @@ const getSafePageNumber = (pageNumber: number, pageSize: number, totalCount: num
     }
 
     return pageNumber;
+}
+
+const getLastPossiblePageNumber = (pageSize: number, totalCount: number) => {
+    const lastPage = Math.floor(totalCount / pageSize);
+    const isPageNumberDivisibleByPageSize = totalCount % pageSize == 0;
+    const lastPossiblePage = isPageNumberDivisibleByPageSize ? lastPage: lastPage + 1;
+
+    return lastPossiblePage;
+}
+
+const cachePageOperation = (previousPageNumber: number, currentPageNumber: number, pageSize: number, totalCount: number, setLastPageOperation:(operation: PageOperation) => void) => {
+    const lastPage = getLastPossiblePageNumber(pageSize, totalCount);
+
+    if(currentPageNumber < previousPageNumber)
+        {
+            setLastPageOperation(PageOperation.previous);
+        }
+        else if(currentPageNumber > previousPageNumber)
+        {
+            setLastPageOperation(PageOperation.next);
+        }
+        else if(previousPageNumber == lastPage && currentPageNumber == 0)
+        {
+            // user was on the last page and is now on the first page
+            setLastPageOperation(PageOperation.next);
+        }
+        else if(previousPageNumber == 0 && currentPageNumber == lastPage)
+        {
+            // user was on the first page and is now on the last page
+            setLastPageOperation(PageOperation.previous);
+        }
+        else
+        {
+            setLastPageOperation(PageOperation.next);
+        }
 }
